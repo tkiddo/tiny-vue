@@ -1,78 +1,29 @@
+import { createHandlers } from "./baseHandlers";
 import { activeEffect } from "./effect";
+import { CustomObject } from "./shared";
 
 const depsMap = new Map();
 
-const ISREACTIVE = "__is_reactive";
-const ISREADONLY = "__is_readonly";
-
-type CustomObject = Record<string, any>;
+export enum Flags {
+  ISREACTIVE = "__is_reactive",
+  ISREADONLY = "__is_readonly",
+}
 
 export function reactive(target: CustomObject) {
   return createReactiveObject(target);
 }
 
 export function readonly(target: CustomObject) {
-  return createReadonlyObject(target);
+  return createReactiveObject(target, true);
 }
 
-function createReactiveObject(target: CustomObject) {
-  return new Proxy(target, {
-    get(target, key, receiver) {
-      if (key === ISREACTIVE) {
-        return true;
-      } else {
-        track(target, key as string);
-        return Reflect.get(target, key, receiver);
-      }
-    },
-    set(target, key, value, receiver) {
-      Reflect.set(target, key, value, receiver);
-      trigger(target, key as string);
-      return true;
-    },
-  });
-}
-
-function createReadonlyObject(target: CustomObject) {
-  return new Proxy(target, {
-    get(target, key, receiver) {
-      if (key === ISREADONLY) {
-        return true;
-      } else {
-        return Reflect.get(target, key, receiver);
-      }
-    },
-    set(target, key, value, receiver) {
-      throw `target is readonly`;
-    },
-  });
-}
-
-function track(target: CustomObject, key: string) {
-  let targetMap = depsMap.get(target);
-  if (!targetMap) {
-    targetMap = new Map();
-    depsMap.set(target, targetMap);
-  }
-  let dep = targetMap.get(key);
-  if (!dep) {
-    dep = new Set();
-    targetMap.set(key, dep);
-  }
-  dep.add(activeEffect);
-}
-
-function trigger(target: CustomObject, key: string) {
-  const targetMap = depsMap.get(target);
-  const dep = targetMap.get(key);
-  dep.forEach((fn: unknown) => {
-    typeof fn === "function" && fn();
-  });
+function createReactiveObject(target: CustomObject, isReadonly = false) {
+  return new Proxy(target, createHandlers(isReadonly));
 }
 
 export function isReactive(source: any) {
-  return !!source[ISREACTIVE];
+  return !!source[Flags.ISREACTIVE];
 }
 export function isReadonly(source: any) {
-  return !!source[ISREADONLY];
+  return !!source[Flags.ISREADONLY];
 }
