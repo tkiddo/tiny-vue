@@ -3,11 +3,16 @@ import { activeEffect } from "./effect";
 const depsMap = new Map();
 
 const ISREACTIVE = "__is_reactive";
+const ISREADONLY = "__is_readonly";
 
 type CustomObject = Record<string, any>;
 
 export function reactive(target: CustomObject) {
   return createReactiveObject(target);
+}
+
+export function readonly(target: CustomObject) {
+  return createReadonlyObject(target);
 }
 
 function createReactiveObject(target: CustomObject) {
@@ -24,6 +29,21 @@ function createReactiveObject(target: CustomObject) {
       Reflect.set(target, key, value, receiver);
       trigger(target, key as string);
       return true;
+    },
+  });
+}
+
+function createReadonlyObject(target: CustomObject) {
+  return new Proxy(target, {
+    get(target, key, receiver) {
+      if (key === ISREADONLY) {
+        return true;
+      } else {
+        return Reflect.get(target, key, receiver);
+      }
+    },
+    set(target, key, value, receiver) {
+      throw `target is readonly`;
     },
   });
 }
@@ -52,4 +72,7 @@ function trigger(target: CustomObject, key: string) {
 
 export function isReactive(source: any) {
   return !!source[ISREACTIVE];
+}
+export function isReadonly(source: any) {
+  return !!source[ISREADONLY];
 }
