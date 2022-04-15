@@ -1,5 +1,47 @@
-export let activeEffect: any;
+import { CustomObject } from "./shared";
+
+export let activeEffect: Effect;
+class Effect {
+  private _fn;
+  public isTracking;
+  constructor(fn) {
+    this._fn = fn;
+    this.isTracking = false;
+  }
+  run() {
+    activeEffect = this;
+    this.isTracking = true;
+    this._fn();
+    this.isTracking = false;
+  }
+}
 export function effect(fn: Function) {
-  activeEffect = fn;
-  fn();
+  const effectInstance = new Effect(fn);
+  effectInstance.run();
+  return effectInstance;
+}
+
+const depsMap = new Map();
+export function track(target: CustomObject, key: string) {
+  let targetMap = depsMap.get(target);
+  if (!targetMap) {
+    targetMap = new Map();
+    depsMap.set(target, targetMap);
+  }
+  let dep = targetMap.get(key);
+  if (!dep) {
+    dep = new Set();
+    targetMap.set(key, dep);
+  }
+  dep.add(activeEffect);
+}
+
+export function trigger(target: CustomObject, key: string) {
+  const targetMap = depsMap.get(target);
+  const dep = targetMap.get(key);
+  dep.forEach((effect: Effect) => {
+    if (effect) {
+      effect.run();
+    }
+  });
 }

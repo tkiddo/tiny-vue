@@ -1,6 +1,5 @@
-import { activeEffect } from "./effect";
+import { track, trigger } from "./effect";
 import { Flags } from "./reactive";
-import { CustomObject } from "./shared";
 
 export function createHandlers(isReadonly = false) {
   return {
@@ -24,27 +23,4 @@ export function createHandlers(isReadonly = false) {
       }
     },
   };
-}
-
-const depsMap = new Map();
-function track(target: CustomObject, key: string) {
-  let targetMap = depsMap.get(target);
-  if (!targetMap) {
-    targetMap = new Map();
-    depsMap.set(target, targetMap);
-  }
-  let dep = targetMap.get(key);
-  if (!dep) {
-    dep = new Set();
-    targetMap.set(key, dep);
-  }
-  dep.add(activeEffect);
-}
-
-function trigger(target: CustomObject, key: string) {
-  const targetMap = depsMap.get(target);
-  const dep = targetMap.get(key);
-  dep.forEach((fn: unknown) => {
-    typeof fn === "function" && fn();
-  });
 }
