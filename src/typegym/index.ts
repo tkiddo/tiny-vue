@@ -87,3 +87,9 @@ type uppercaseKey<obj extends object> = {
 type upObj = uppercaseKey<{
   name: string;
 }>;
+
+type reverse<Arr extends unknown[]> = Arr extends [infer First, ...infer Rest]
+  ? [...reverse<Rest>, First]
+  : Arr;
+
+type abs = reverse<[1, 2, 3, 4]>;
