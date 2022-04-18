@@ -1,7 +1,7 @@
 import { track, trigger } from "./effect";
 import { Flags } from "./reactive";
 
-export function createHandlers(isReadonly = false) {
+export function createHandlers(isReadonly = false): ProxyHandler<any> {
   return {
     get(target, key, receiver) {
       if (key === Flags.ISREADONLY && isReadonly) {

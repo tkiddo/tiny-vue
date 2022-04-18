@@ -3,16 +3,12 @@ import { CustomObject } from "./shared";
 export let activeEffect: Effect;
 class Effect {
   private _fn;
-  public isTracking;
-  constructor(fn) {
+  constructor(fn: Function) {
     this._fn = fn;
-    this.isTracking = false;
   }
   run() {
     activeEffect = this;
-    this.isTracking = true;
     this._fn();
-    this.isTracking = false;
   }
 }
 export function effect(fn: Function) {
