@@ -4,7 +4,7 @@
   "description": "make a vue",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --detectOpenHandles"
+    "test": "jest --detectOpenHandles"
   },
   "repository": {
     "type": "git",
