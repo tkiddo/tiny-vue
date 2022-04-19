@@ -1,5 +1,5 @@
 import { effect } from "../effect";
-import { isRef, ref } from "../ref";
+import { isRef, ref, unRef } from "../ref";
 
 test("ref happy path", () => {
   const observed = ref(1);
@@ -14,4 +14,11 @@ test("ref happy path", () => {
   expect(count).toBe(3);
   expect(isRef(observed)).toBe(true);
   expect(isRef(count)).toBe(false);
+});
+
+test("unRef", () => {
+  const observed = ref(1);
+  const source = unRef(observed);
+  expect(observed.value).toBe(1);
+  expect(source).toBe(1);
 });

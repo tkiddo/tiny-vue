@@ -23,3 +23,7 @@ export function ref(source: any) {
 export function isRef(r: any): r is RefImpl {
   return r ? r._isRef === true : false;
 }
+
+export function unRef(ref: any) {
+  return isRef(ref) ? ref.value : ref;
+}
