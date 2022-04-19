@@ -11,12 +11,24 @@ export function reactive(target: CustomObject) {
   return createReactiveObject(target);
 }
 
+export function shallowReactive(target: CustomObject) {
+  return createReactiveObject(target, false, true);
+}
+
 export function readonly(target: CustomObject) {
   return createReactiveObject(target, true);
 }
 
-function createReactiveObject(target: CustomObject, isReadonly = false) {
-  return new Proxy(target, createHandlers(isReadonly));
+export function shallowReadonly(target: CustomObject) {
+  return createReactiveObject(target, true, true);
+}
+
+function createReactiveObject(
+  target: CustomObject,
+  isReadonly = false,
+  isShallow = false
+) {
+  return new Proxy(target, createHandlers(isReadonly, isShallow));
 }
 
 export function isReactive(source: any) {

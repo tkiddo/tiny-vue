@@ -1,4 +1,13 @@
-import { isReactive, isReadonly, reactive, readonly, toRaw } from "../reactive";
+import { effect } from "../effect";
+import {
+  isReactive,
+  isReadonly,
+  reactive,
+  readonly,
+  shallowReactive,
+  shallowReadonly,
+  toRaw,
+} from "../reactive";
 
 test("happy path", () => {
   expect(true).toBe(true);
@@ -47,4 +56,58 @@ test("toRaw", () => {
   expect(toRaw(observed)).toBe(original);
   expect(toRaw(original)).toBe(original);
   expect(toRaw(reactive(original))).toBe(original);
+});
+
+test("wrapped object reactive", () => {
+  const original = {
+    user: {
+      age: 10,
+    },
+  };
+  const observed = reactive(original);
+  expect(observed.user.age).toBe(10);
+  expect(isReactive(observed.user)).toBe(true);
+  let count = 0;
+  effect(() => {
+    count = observed.user.age + 10;
+  });
+  expect(count).toBe(20);
+  observed.user.age = 20;
+  expect(count).toBe(30);
+});
+
+test("shallow reactive", () => {
+  const original = {
+    user: {
+      age: 10,
+    },
+  };
+  const observed = shallowReactive(original);
+  expect(observed.user.age).toBe(10);
+  expect(isReactive(observed.user)).toBe(false);
+  let count = 0;
+  effect(() => {
+    count = observed.user.age + 10;
+  });
+  expect(count).toBe(20);
+  observed.user.age = 20;
+  expect(count).toBe(20);
+});
+
+test("shallow readonly", () => {
+  const original = {
+    user: {
+      age: 10,
+    },
+  };
+  const observed = shallowReadonly(original);
+  expect(observed.user.age).toBe(10);
+  expect(isReadonly(observed.user)).toBe(false);
+  let count = 0;
+  effect(() => {
+    count = observed.user.age + 10;
+  });
+  expect(count).toBe(20);
+  observed.user.age = 20;
+  expect(count).toBe(20);
 });
