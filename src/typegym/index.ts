@@ -93,3 +93,17 @@ type reverse<Arr extends unknown[]> = Arr extends [infer First, ...infer Rest]
   : Arr;
 
 type abs = reverse<[1, 2, 3, 4]>;
+
+type IsEqual<T, U> = (T extends U ? true : false) &
+  (U extends T ? true : false);
+
+type Includes<Arr extends unknown[], Target> = Arr extends [
+  infer First,
+  ...infer Rest
+]
+  ? IsEqual<First, Target> extends true
+    ? true
+    : Includes<Rest, Target>
+  : false;
+
+type result4 = Includes<[1, 2, 3, 4], 0>;
