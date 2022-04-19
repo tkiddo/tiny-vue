@@ -1,12 +1,10 @@
 import { createHandlers } from "./baseHandlers";
-import { activeEffect } from "./effect";
 import { CustomObject } from "./shared";
-
-const depsMap = new Map();
 
 export enum Flags {
   ISREACTIVE = "__is_reactive",
   ISREADONLY = "__is_readonly",
+  ORIGINAL = "__original",
 }
 
 export function reactive(target: CustomObject) {
@@ -26,4 +24,10 @@ export function isReactive(source: any) {
 }
 export function isReadonly(source: any) {
   return !!source[Flags.ISREADONLY];
+}
+
+export function toRaw(observed: any) {
+  return isReadonly(observed) || isReactive(observed)
+    ? observed[Flags.ORIGINAL]
+    : observed;
 }

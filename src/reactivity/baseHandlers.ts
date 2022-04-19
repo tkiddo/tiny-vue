@@ -10,6 +10,9 @@ export function createHandlers(isReadonly = false): ProxyHandler<any> {
       if (key === Flags.ISREACTIVE && !isReadonly) {
         return true;
       }
+      if (key === Flags.ORIGINAL) {
+        return target;
+      }
       track(target, key as string);
       return Reflect.get(target, key, receiver);
     },

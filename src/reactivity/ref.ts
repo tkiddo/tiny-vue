@@ -2,7 +2,7 @@ import { track, trigger } from "./effect";
 
 class RefImpl {
   private _value;
-  private _isRef = true;
+  public _isRef = true;
   constructor(initialValue: any) {
     this._value = initialValue;
   }

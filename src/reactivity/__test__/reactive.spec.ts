@@ -1,5 +1,4 @@
-import { effect } from "../effect";
-import { isReactive, isReadonly, reactive, readonly } from "../reactive";
+import { isReactive, isReadonly, reactive, readonly, toRaw } from "../reactive";
 
 test("happy path", () => {
   expect(true).toBe(true);
@@ -38,4 +37,14 @@ test("readonly", () => {
     observed.name = "hi";
   };
   expect(fn).toThrow("target is readonly");
+});
+
+test("toRaw", () => {
+  const original = {
+    name: "hello",
+  };
+  const observed = readonly(original);
+  expect(toRaw(observed)).toBe(original);
+  expect(toRaw(original)).toBe(original);
+  expect(toRaw(reactive(original))).toBe(original);
 });
