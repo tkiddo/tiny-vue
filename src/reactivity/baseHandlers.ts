@@ -1,11 +1,8 @@
-import { track, trigger } from "./effect";
-import { Flags, reactive } from "./reactive";
-import { isObject } from "./shared/utils";
+import { track, trigger } from './effect';
+import { Flags, reactive, readonly } from './reactive';
+import { isObject } from './shared/utils';
 
-export function createHandlers(
-  isReadonly = false,
-  isShallow = false
-): ProxyHandler<any> {
+export function createHandlers(isReadonly = false, isShallow = false): ProxyHandler<any> {
   return {
     get(target, key, receiver) {
       if (key === Flags.ISREADONLY && isReadonly) {
@@ -22,7 +19,7 @@ export function createHandlers(
       const res = Reflect.get(target, key, receiver);
 
       if (isObject(res) && !isShallow) {
-        return reactive(res);
+        return isReadonly ? readonly(res) : reactive(res);
       }
       return res;
     },
@@ -32,8 +29,8 @@ export function createHandlers(
         trigger(target, key as string);
         return true;
       } else {
-        throw "target is readonly";
+        throw 'target is readonly';
       }
-    },
+    }
   };
 }

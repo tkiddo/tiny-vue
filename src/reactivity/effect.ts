@@ -1,4 +1,4 @@
-import { CustomObject } from "./shared";
+import { CustomObject } from './shared';
 
 export let activeEffect: Effect;
 class Effect {

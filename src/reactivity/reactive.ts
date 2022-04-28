@@ -1,10 +1,10 @@
-import { createHandlers } from "./baseHandlers";
-import { CustomObject } from "./shared";
+import { createHandlers } from './baseHandlers';
+import { CustomObject } from './shared';
 
 export enum Flags {
-  ISREACTIVE = "__is_reactive",
-  ISREADONLY = "__is_readonly",
-  ORIGINAL = "__original",
+  ISREACTIVE = '__is_reactive',
+  ISREADONLY = '__is_readonly',
+  ORIGINAL = '__original'
 }
 
 export function reactive(target: CustomObject) {
@@ -23,11 +23,7 @@ export function shallowReadonly(target: CustomObject) {
   return createReactiveObject(target, true, true);
 }
 
-function createReactiveObject(
-  target: CustomObject,
-  isReadonly = false,
-  isShallow = false
-) {
+function createReactiveObject(target: CustomObject, isReadonly = false, isShallow = false) {
   return new Proxy(target, createHandlers(isReadonly, isShallow));
 }
 
@@ -39,7 +35,5 @@ export function isReadonly(source: any) {
 }
 
 export function toRaw(observed: any) {
-  return isReadonly(observed) || isReactive(observed)
-    ? observed[Flags.ORIGINAL]
-    : observed;
+  return isReadonly(observed) || isReactive(observed) ? observed[Flags.ORIGINAL] : observed;
 }

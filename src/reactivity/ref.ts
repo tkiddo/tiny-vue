@@ -1,4 +1,4 @@
-import { track, trigger } from "./effect";
+import { track, trigger } from './effect';
 
 class RefImpl {
   private _value;
@@ -7,12 +7,12 @@ class RefImpl {
     this._value = initialValue;
   }
   get value() {
-    track(this, "value");
+    track(this, 'value');
     return this._value;
   }
   set value(newValue) {
     this._value = newValue;
-    trigger(this, "value");
+    trigger(this, 'value');
   }
 }
 
