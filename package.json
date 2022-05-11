@@ -6,7 +6,7 @@
   "module": "dist/index.es.js",
   "scripts": {
     "test": "jest --detectOpenHandles --watch",
-    "build": "rollup -c"
+    "build": "rollup -c --watch"
   },
   "repository": {
     "type": "git",
